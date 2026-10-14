@@ -374,9 +374,18 @@ function computeBaselineRMSE(split) {
  * @returns {number} predicted rating in `[1, 5]`
  */
 function predictRating(userId, movieId) {
-  // TODO(hw5): gather the two factor rows, take their dot product, add
-  // globalMean and clamp the result to [1, 5].
-  throw new Error("TODO(hw5): predictRating is not implemented yet.");
+  if (!model) return 0;
+  if (!Number.isInteger(userId) || !Number.isInteger(movieId) || userId < 0 ||
+      movieId < 0 || userId >= model.userFactors.shape[0] ||
+      movieId >= model.itemFactors.shape[0] ||
+      (model.trainedUsers && !model.trainedUsers.has(userId)) ||
+      (model.trainedItems && !model.trainedItems.has(movieId))) return model.globalMean;
+  return tf.tidy(() => {
+    const f = model.userFactors.shape[1];
+    const u = model.userFactors.slice([userId, 0], [1, f]);
+    const i = model.itemFactors.slice([movieId, 0], [1, f]);
+    return clamp(model.globalMean + u.mul(i).sum().dataSync()[0], 1, 5);
+  });
 }
 
 /**
@@ -408,8 +417,23 @@ function predictRating(userId, movieId) {
  * @returns {Model}
  */
 function initializeFactors(train, numFactors = NUM_FACTORS) {
-  // TODO(hw5): compute globalMean, create the two tf.Variables, assign to model.
-  throw new Error("TODO(hw5): initializeFactors is not implemented yet.");
+  if (model) tf.dispose([model.userFactors, model.itemFactors]);
+  const maxMovieId = movies.reduce((m, x) => Math.max(m, x.id), 0);
+  const trainedUsers = new Set(train.map(r => r.userId));
+  const trainedItems = new Set(train.map(r => r.movieId));
+  const globalMean = train.length ? train.reduce((a, r) => a + r.rating, 0) / train.length : 0;
+  // Fixed seeds make repeated runs comparable. Untrained rows stay zero so
+  // batched RMSE falls back to the training mean for cold-start ids.
+  model = tf.tidy(() => ({
+    userFactors: tf.variable(tf.randomNormal([numUsers + 1, numFactors], 0, 0.05, 'float32', 42)
+      .mul(tf.tensor1d(Array.from({length: numUsers + 1}, (_, id) => trainedUsers.has(id) ? 1 : 0)).expandDims(1))),
+    itemFactors: tf.variable(tf.randomNormal([maxMovieId + 1, numFactors], 0, 0.05, 'float32', 43)
+      .mul(tf.tensor1d(Array.from({length: maxMovieId + 1}, (_, id) => trainedItems.has(id) ? 1 : 0)).expandDims(1))),
+    globalMean
+  }));
+  model.trainedUsers = trainedUsers;
+  model.trainedItems = trainedItems;
+  return model;
 }
 
 /**
@@ -462,8 +486,56 @@ function initializeFactors(train, numFactors = NUM_FACTORS) {
  * @returns {HistoryRow[]}
  */
 function trainMF(train, val, opts) {
-  // TODO(hw5): batched tensor training loop; update model in place; return history.
-  throw new Error("TODO(hw5): trainMF is not implemented yet.");
+  trainingHistory = [];
+  if (!train.length) return trainingHistory;
+  if (!isTfModel(model)) throw new Error('Initialize the factor model before training.');
+  const {epochs, lr, reg} = opts;
+  const batchSize = Math.max(1, Math.floor(opts.batchSize));
+  const optimizer = tf.train.adam(lr);
+  let seed = 2026, best = Infinity, saved = null;
+  const random = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
+  const order = Array.from({length: train.length}, (_, i) => i);
+  try {
+    for (let epoch = 1; epoch <= epochs; epoch++) {
+      for (let j = order.length - 1; j > 0; j--) {
+        const k = Math.floor(random() * (j + 1));
+        [order[j], order[k]] = [order[k], order[j]];
+      }
+      for (let start = 0; start < order.length; start += batchSize) {
+        const batch = order.slice(start, start + batchSize).map(i => train[i]);
+        tf.tidy(() => {
+          const users = tf.tensor1d(batch.map(r => r.userId), 'int32');
+          const items = tf.tensor1d(batch.map(r => r.movieId), 'int32');
+          const targets = tf.tensor1d(batch.map(r => r.rating));
+          // returnCost=false returns null. tidy releases the intermediates.
+          optimizer.minimize(() => {
+            const u = tf.gather(model.userFactors, users);
+            const i = tf.gather(model.itemFactors, items);
+            const predictions = u.mul(i).sum(1).add(model.globalMean);
+            const mse = tf.losses.meanSquaredError(targets, predictions);
+            // Per-observation L2 on gathered factor rows, averaged over the
+            // batch. A full-matrix sum at every step would shrink all factors.
+            const l2 = u.square().sum(1).add(i.square().sum(1)).mean().mul(reg);
+            return mse.add(l2);
+          }, false, [model.userFactors, model.itemFactors]);
+        });
+      }
+      const row = {epoch, trainRMSE: computeRMSEFor(train), valRMSE: computeRMSEFor(val)};
+      if (!Number.isFinite(row.valRMSE)) throw new Error('Training produced non-finite RMSE.');
+      trainingHistory.push(row);
+      if (row.valRMSE < best) {
+        best = row.valRMSE;
+        saved = [model.userFactors.dataSync().slice(), model.itemFactors.dataSync().slice()];
+      }
+    }
+    // Restore weights, not just the label of the best epoch. The pipeline
+    // leaves the restored model available to recommendation and evaluation.
+    if (saved) tf.tidy(() => {
+      model.userFactors.assign(tf.tensor2d(saved[0], model.userFactors.shape));
+      model.itemFactors.assign(tf.tensor2d(saved[1], model.itemFactors.shape));
+    });
+    return trainingHistory;
+  } finally { optimizer.dispose(); }
 }
 
 /**
@@ -481,8 +553,10 @@ function trainMF(train, val, opts) {
  * @returns {HistoryRow|null}
  */
 function selectBestCheckpoint(history) {
-  // TODO(hw5): scan for the minimum valRMSE, breaking ties toward the earliest epoch.
-  throw new Error("TODO(hw5): selectBestCheckpoint is not implemented yet.");
+  if (!history || !history.length) return null;
+  return history.reduce((best, row) =>
+    !best || row.valRMSE < best.valRMSE ||
+    (row.valRMSE === best.valRMSE && row.epoch < best.epoch) ? row : best, null);
 }
 
 /**
@@ -517,8 +591,25 @@ function selectBestCheckpoint(history) {
  * @returns {Array<{movieId: number, title: string, score: number}>}
  */
 function recommendTopK(userId, K = 10) {
-  // TODO(hw5): matMul + tf.topk, mask train/val items, sort desc, take the top K.
-  throw new Error("TODO(hw5): recommendTopK is not implemented yet.");
+  if (!model || K <= 0 || !Number.isInteger(userId) || userId < 0 ||
+      userId >= model.userFactors.shape[0] ||
+      (model.trainedUsers && !model.trainedUsers.has(userId))) return [];
+  const pool = arguments[2] || model.trainedItems;
+  const seen = new Set([...trainSet, ...valSet].filter(r => r.userId === userId).map(r => r.movieId));
+  const candidates = movies.filter(m => m.id > 0 && m.id < model.itemFactors.shape[0] &&
+    !seen.has(m.id) && (!pool || pool.has(m.id)));
+  if (!candidates.length) return [];
+  return tf.tidy(() => {
+    const ids = tf.tensor1d(candidates.map(m => m.id), 'int32');
+    const user = model.userFactors.slice([userId, 0], [1, model.userFactors.shape[1]]);
+    const scores = tf.gather(model.itemFactors, ids).matMul(user, false, true)
+      .reshape([candidates.length]).add(model.globalMean).clipByValue(1, 5);
+    const top = tf.topk(scores, Math.min(Math.floor(K), candidates.length), true);
+    const values = top.values.dataSync(), indices = top.indices.dataSync();
+    return Array.from(indices, (index, j) => ({
+      movieId: candidates[index].id, title: candidates[index].title, score: values[j]
+    }));
+  });
 }
 
 /**
@@ -549,8 +640,31 @@ function recommendTopK(userId, K = 10) {
  * @returns {{overallRecall: number, perUser: Array<{userId: number, relevant: number, hit: number}>, excluded: {unseenIds: number[], usersWithoutRelevant: number[]}}}
  */
 function recallAtK(K = 10) {
-  // TODO(hw5): evaluate Recall@K with explicit exclusions.
-  throw new Error("TODO(hw5): recallAtK is not implemented yet.");
+  const pool = new Set(trainSet.map(r => r.movieId));
+  const trainedUsers = new Set(trainSet.map(r => r.userId));
+  const seen = new Map();
+  for (const r of [...trainSet, ...valSet]) {
+    if (!seen.has(r.userId)) seen.set(r.userId, new Set());
+    seen.get(r.userId).add(r.movieId);
+  }
+  const relevant = new Map(), users = new Set(testSet.map(r => r.userId)), unseenIds = new Set();
+  for (const r of testSet) {
+    if (r.rating < 4) continue;
+    if (!pool.has(r.movieId)) { unseenIds.add(r.movieId); continue; }
+    if (!trainedUsers.has(r.userId) || (seen.get(r.userId) || new Set()).has(r.movieId)) continue;
+    if (!relevant.has(r.userId)) relevant.set(r.userId, new Set());
+    relevant.get(r.userId).add(r.movieId);
+  }
+  const perUser = [], usersWithoutRelevant = [];
+  for (const userId of Array.from(users).sort((a,b) => a-b)) {
+    const items = relevant.get(userId);
+    if (!items || !items.size) { usersWithoutRelevant.push(userId); continue; }
+    const recs = recommendTopK(userId, K, pool);
+    const hit = recs.reduce((n, r) => n + (items.has(r.movieId) ? 1 : 0), 0);
+    perUser.push({userId, relevant: items.size, hit});
+  }
+  return {overallRecall: perUser.length ? perUser.reduce((n,r) => n + r.hit/r.relevant, 0)/perUser.length : 0,
+    perUser, excluded: {unseenIds: Array.from(unseenIds).sort((a,b) => a-b), usersWithoutRelevant}};
 }
 
 // ---------------------------------------------------------------------------
@@ -911,6 +1025,11 @@ function recallFixture(targetRank) {
     { userId: 2, movieId: 2, rating: 5, timestamp: 1 },
     { userId: 2, movieId: 3, rating: 4, timestamp: 2 },
   ];
+  // The rank-11 check needs eleven eligible training-pool candidates.
+  // Add the remaining items for another user, leaving user 1's history intact.
+  for (let movieId = 4; movieId <= 12; movieId++) {
+    train.push({ userId: 2, movieId, rating: 4, timestamp: movieId });
+  }
   const val = [];
   const test = [{ userId: 1, movieId: 2, rating: 5, timestamp: 2 }];
   const itemScores = { 1: 3.0 };

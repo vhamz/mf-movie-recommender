@@ -1,0 +1,865 @@
+{
+  "counts": {
+    "train": 79619,
+    "val": 9596,
+    "test": 10785,
+    "trainItems": 1611
+  },
+  "mean": 3.5806026199776437,
+  "sparsity": 0.9369533063577546,
+  "unseen": {
+    "val": {
+      "ratings": 35,
+      "movies": [
+        677,
+        814,
+        897,
+        910,
+        957,
+        1106,
+        1408,
+        1453,
+        1460,
+        1494,
+        1508,
+        1526,
+        1543,
+        1546,
+        1565,
+        1569,
+        1571,
+        1575,
+        1576,
+        1579,
+        1584,
+        1586,
+        1588,
+        1603,
+        1614,
+        1633,
+        1637,
+        1653,
+        1659,
+        1667,
+        1668,
+        1679
+      ],
+      "users": []
+    },
+    "test": {
+      "ratings": 53,
+      "movies": [
+        897,
+        910,
+        913,
+        957,
+        1106,
+        1130,
+        1236,
+        1408,
+        1432,
+        1447,
+        1458,
+        1476,
+        1498,
+        1508,
+        1520,
+        1525,
+        1562,
+        1563,
+        1570,
+        1572,
+        1577,
+        1580,
+        1583,
+        1588,
+        1613,
+        1618,
+        1621,
+        1624,
+        1625,
+        1645,
+        1646,
+        1647,
+        1648,
+        1649,
+        1650,
+        1651,
+        1661,
+        1665,
+        1666,
+        1669,
+        1671,
+        1674,
+        1677,
+        1678,
+        1680,
+        1682
+      ],
+      "users": []
+    }
+  },
+  "baseline": {
+    "val": 1.1829947710600113,
+    "test": 1.2289001371836488
+  },
+  "mf": {
+    "val": 1.002885090069303,
+    "test": 1.0432537082445852
+  },
+  "warmOnly": {
+    "mf": 1.0385025837937838,
+    "baseline": 1.2257193843347933,
+    "ratings": 10732
+  },
+  "recall": 0.020015618020100552,
+  "recallUsers": 861,
+  "manualExample": {
+    "userId": 1,
+    "relevant": 19,
+    "hit": 1
+  },
+  "dotExample": {
+    "userId": 1,
+    "movieId": 100,
+    "rating": 5,
+    "mu": 3.5806026199776437,
+    "products": [
+      0.11569674289801934,
+      0.07621488962962442,
+      -0.028450948579429314,
+      0.02150096760242004,
+      0.3410068476591128,
+      0.05687269921028326,
+      0.077223870153591,
+      -0.14296501397316064,
+      0.029393994609158813,
+      0.03264453942745149,
+      0.0033823520828845655,
+      0.1183858806260929,
+      0.1606816126847086,
+      0.07750257535624705,
+      0.04578034379427631,
+      -0.014556780107817247
+    ],
+    "dot": 0.9703145730734635,
+    "prediction": 4.550917193051108
+  },
+  "analysis": [
+    {
+      "userId": 1,
+      "historyCount": 244,
+      "likedCount": 144,
+      "likedGenres": [
+        [
+          "Drama",
+          68
+        ],
+        [
+          "Comedy",
+          42
+        ],
+        [
+          "Action",
+          37
+        ],
+        [
+          "Sci-Fi",
+          27
+        ],
+        [
+          "Thriller",
+          27
+        ],
+        [
+          "Romance",
+          26
+        ],
+        [
+          "Adventure",
+          15
+        ],
+        [
+          "War",
+          15
+        ],
+        [
+          "Crime",
+          13
+        ],
+        [
+          "Horror",
+          7
+        ],
+        [
+          "Children's",
+          5
+        ],
+        [
+          "Musical",
+          5
+        ],
+        [
+          "Animation",
+          4
+        ],
+        [
+          "Documentary",
+          4
+        ],
+        [
+          "Mystery",
+          3
+        ],
+        [
+          "Western",
+          3
+        ],
+        [
+          "Film-Noir",
+          1
+        ],
+        [
+          "Fantasy",
+          1
+        ]
+      ],
+      "pastExamples": [
+        {
+          "movieId": 168,
+          "rating": 5,
+          "title": "Monty Python and the Holy Grail (1974)",
+          "genres": [
+            "Comedy"
+          ]
+        },
+        {
+          "movieId": 172,
+          "rating": 5,
+          "title": "Empire Strikes Back, The (1980)",
+          "genres": [
+            "Action",
+            "Adventure",
+            "Drama",
+            "Romance",
+            "Sci-Fi",
+            "War"
+          ]
+        },
+        {
+          "movieId": 165,
+          "rating": 5,
+          "title": "Jean de Florette (1986)",
+          "genres": [
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 156,
+          "rating": 4,
+          "title": "Reservoir Dogs (1992)",
+          "genres": [
+            "Crime",
+            "Thriller"
+          ]
+        },
+        {
+          "movieId": 166,
+          "rating": 5,
+          "title": "Manon of the Spring (Manon des sources) (1986)",
+          "genres": [
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 196,
+          "rating": 5,
+          "title": "Dead Poets Society (1989)",
+          "genres": [
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 187,
+          "rating": 4,
+          "title": "Godfather: Part II, The (1974)",
+          "genres": [
+            "Action",
+            "Crime",
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 14,
+          "rating": 5,
+          "title": "Postino, Il (1994)",
+          "genres": [
+            "Drama",
+            "Romance"
+          ]
+        },
+        {
+          "movieId": 127,
+          "rating": 5,
+          "title": "Godfather, The (1972)",
+          "genres": [
+            "Action",
+            "Crime",
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 250,
+          "rating": 4,
+          "title": "Fifth Element, The (1997)",
+          "genres": [
+            "Action",
+            "Sci-Fi"
+          ]
+        },
+        {
+          "movieId": 109,
+          "rating": 5,
+          "title": "Mystery Science Theater 3000: The Movie (1996)",
+          "genres": [
+            "Comedy",
+            "Sci-Fi"
+          ]
+        },
+        {
+          "movieId": 181,
+          "rating": 5,
+          "title": "Return of the Jedi (1983)",
+          "genres": [
+            "Action",
+            "Adventure",
+            "Romance",
+            "Sci-Fi",
+            "War"
+          ]
+        },
+        {
+          "movieId": 1,
+          "rating": 5,
+          "title": "Toy Story (1995)",
+          "genres": [
+            "Animation",
+            "Children's",
+            "Comedy"
+          ]
+        },
+        {
+          "movieId": 246,
+          "rating": 5,
+          "title": "Chasing Amy (1997)",
+          "genres": [
+            "Drama",
+            "Romance"
+          ]
+        },
+        {
+          "movieId": 50,
+          "rating": 5,
+          "title": "Star Wars (1977)",
+          "genres": [
+            "Action",
+            "Adventure",
+            "Romance",
+            "Sci-Fi",
+            "War"
+          ]
+        },
+        {
+          "movieId": 248,
+          "rating": 4,
+          "title": "Grosse Pointe Blank (1997)",
+          "genres": [
+            "Comedy",
+            "Crime"
+          ]
+        },
+        {
+          "movieId": 257,
+          "rating": 4,
+          "title": "Men in Black (1997)",
+          "genres": [
+            "Action",
+            "Adventure",
+            "Comedy",
+            "Sci-Fi"
+          ]
+        },
+        {
+          "movieId": 249,
+          "rating": 4,
+          "title": "Austin Powers: International Man of Mystery (1997)",
+          "genres": [
+            "Comedy"
+          ]
+        },
+        {
+          "movieId": 253,
+          "rating": 5,
+          "title": "Pillow Book, The (1995)",
+          "genres": [
+            "Drama",
+            "Romance"
+          ]
+        },
+        {
+          "movieId": 93,
+          "rating": 5,
+          "title": "Welcome to the Dollhouse (1995)",
+          "genres": [
+            "Comedy",
+            "Drama"
+          ]
+        }
+      ],
+      "recs": [
+        {
+          "movieId": 169,
+          "title": "Wrong Trousers, The (1993)",
+          "score": 5,
+          "genres": [
+            "Animation",
+            "Comedy"
+          ]
+        },
+        {
+          "movieId": 408,
+          "title": "Close Shave, A (1995)",
+          "score": 5,
+          "genres": [
+            "Animation",
+            "Comedy",
+            "Thriller"
+          ]
+        },
+        {
+          "movieId": 850,
+          "title": "Perfect Candidate, A (1996)",
+          "score": 5,
+          "genres": [
+            "Documentary"
+          ]
+        },
+        {
+          "movieId": 1449,
+          "title": "Pather Panchali (1955)",
+          "score": 5,
+          "genres": [
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 1558,
+          "title": "Aparajito (1956)",
+          "score": 5,
+          "genres": [
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 1268,
+          "title": "Bitter Moon (1992)",
+          "score": 4.890911102294922,
+          "genres": [
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 647,
+          "title": "Ran (1985)",
+          "score": 4.879655838012695,
+          "genres": [
+            "Drama",
+            "War"
+          ]
+        },
+        {
+          "movieId": 1251,
+          "title": "A Chef in Love (1996)",
+          "score": 4.842055797576904,
+          "genres": [
+            "Comedy"
+          ]
+        },
+        {
+          "movieId": 657,
+          "title": "Manchurian Candidate, The (1962)",
+          "score": 4.826735973358154,
+          "genres": [
+            "Film-Noir",
+            "Thriller"
+          ]
+        },
+        {
+          "movieId": 603,
+          "title": "Rear Window (1954)",
+          "score": 4.821591854095459,
+          "genres": [
+            "Mystery",
+            "Thriller"
+          ]
+        }
+      ]
+    },
+    {
+      "userId": 405,
+      "historyCount": 662,
+      "likedCount": 116,
+      "likedGenres": [
+        [
+          "Drama",
+          52
+        ],
+        [
+          "Comedy",
+          40
+        ],
+        [
+          "Action",
+          27
+        ],
+        [
+          "Thriller",
+          22
+        ],
+        [
+          "Romance",
+          20
+        ],
+        [
+          "Children's",
+          12
+        ],
+        [
+          "Horror",
+          11
+        ],
+        [
+          "Adventure",
+          11
+        ],
+        [
+          "Sci-Fi",
+          11
+        ],
+        [
+          "Musical",
+          10
+        ],
+        [
+          "Crime",
+          9
+        ],
+        [
+          "War",
+          9
+        ],
+        [
+          "Mystery",
+          5
+        ],
+        [
+          "Animation",
+          5
+        ],
+        [
+          "Western",
+          3
+        ],
+        [
+          "Film-Noir",
+          2
+        ],
+        [
+          "Fantasy",
+          1
+        ],
+        [
+          "Documentary",
+          1
+        ]
+      ],
+      "pastExamples": [
+        {
+          "movieId": 288,
+          "rating": 5,
+          "title": "Scream (1996)",
+          "genres": [
+            "Horror",
+            "Thriller"
+          ]
+        },
+        {
+          "movieId": 302,
+          "rating": 4,
+          "title": "L.A. Confidential (1997)",
+          "genres": [
+            "Crime",
+            "Film-Noir",
+            "Mystery",
+            "Thriller"
+          ]
+        },
+        {
+          "movieId": 313,
+          "rating": 4,
+          "title": "Titanic (1997)",
+          "genres": [
+            "Action",
+            "Drama",
+            "Romance"
+          ]
+        },
+        {
+          "movieId": 347,
+          "rating": 4,
+          "title": "Wag the Dog (1997)",
+          "genres": [
+            "Comedy",
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 132,
+          "rating": 5,
+          "title": "Wizard of Oz, The (1939)",
+          "genres": [
+            "Adventure",
+            "Children's",
+            "Drama",
+            "Musical"
+          ]
+        },
+        {
+          "movieId": 193,
+          "rating": 4,
+          "title": "Right Stuff, The (1983)",
+          "genres": [
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 521,
+          "rating": 4,
+          "title": "Deer Hunter, The (1978)",
+          "genres": [
+            "Drama",
+            "War"
+          ]
+        },
+        {
+          "movieId": 64,
+          "rating": 5,
+          "title": "Shawshank Redemption, The (1994)",
+          "genres": [
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 174,
+          "rating": 5,
+          "title": "Raiders of the Lost Ark (1981)",
+          "genres": [
+            "Action",
+            "Adventure"
+          ]
+        },
+        {
+          "movieId": 187,
+          "rating": 5,
+          "title": "Godfather: Part II, The (1974)",
+          "genres": [
+            "Action",
+            "Crime",
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 480,
+          "rating": 4,
+          "title": "North by Northwest (1959)",
+          "genres": [
+            "Comedy",
+            "Thriller"
+          ]
+        },
+        {
+          "movieId": 659,
+          "rating": 4,
+          "title": "Arsenic and Old Lace (1944)",
+          "genres": [
+            "Comedy",
+            "Mystery",
+            "Thriller"
+          ]
+        },
+        {
+          "movieId": 185,
+          "rating": 4,
+          "title": "Psycho (1960)",
+          "genres": [
+            "Horror",
+            "Romance",
+            "Thriller"
+          ]
+        },
+        {
+          "movieId": 204,
+          "rating": 5,
+          "title": "Back to the Future (1985)",
+          "genres": [
+            "Comedy",
+            "Sci-Fi"
+          ]
+        },
+        {
+          "movieId": 79,
+          "rating": 5,
+          "title": "Fugitive, The (1993)",
+          "genres": [
+            "Action",
+            "Thriller"
+          ]
+        },
+        {
+          "movieId": 98,
+          "rating": 4,
+          "title": "Silence of the Lambs, The (1991)",
+          "genres": [
+            "Drama",
+            "Thriller"
+          ]
+        },
+        {
+          "movieId": 173,
+          "rating": 5,
+          "title": "Princess Bride, The (1987)",
+          "genres": [
+            "Action",
+            "Adventure",
+            "Comedy",
+            "Romance"
+          ]
+        },
+        {
+          "movieId": 195,
+          "rating": 5,
+          "title": "Terminator, The (1984)",
+          "genres": [
+            "Action",
+            "Sci-Fi",
+            "Thriller"
+          ]
+        },
+        {
+          "movieId": 56,
+          "rating": 4,
+          "title": "Pulp Fiction (1994)",
+          "genres": [
+            "Crime",
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 317,
+          "rating": 4,
+          "title": "In the Name of the Father (1993)",
+          "genres": [
+            "Drama"
+          ]
+        }
+      ],
+      "recs": [
+        {
+          "movieId": 909,
+          "title": "Dangerous Beauty (1998)",
+          "score": 5,
+          "genres": [
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 1304,
+          "title": "New York Cop (1996)",
+          "score": 5,
+          "genres": [
+            "Action",
+            "Crime"
+          ]
+        },
+        {
+          "movieId": 1500,
+          "title": "Santa with Muscles (1996)",
+          "score": 5,
+          "genres": [
+            "Comedy"
+          ]
+        },
+        {
+          "movieId": 344,
+          "title": "Apostle, The (1997)",
+          "score": 4.980442047119141,
+          "genres": [
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 1463,
+          "title": "Boys, Les (1997)",
+          "score": 4.860706329345703,
+          "genres": [
+            "Comedy"
+          ]
+        },
+        {
+          "movieId": 1610,
+          "title": "Truth or Consequences, N.M. (1997)",
+          "score": 4.83302116394043,
+          "genres": [
+            "Action",
+            "Crime",
+            "Romance"
+          ]
+        },
+        {
+          "movieId": 316,
+          "title": "As Good As It Gets (1997)",
+          "score": 4.7594733238220215,
+          "genres": [
+            "Comedy",
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 1631,
+          "title": "Slingshot, The (1993)",
+          "score": 4.688267707824707,
+          "genres": [
+            "Comedy",
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 1398,
+          "title": "Anna (1996)",
+          "score": 4.653773307800293,
+          "genres": [
+            "Drama"
+          ]
+        },
+        {
+          "movieId": 666,
+          "title": "Blood For Dracula (Andy Warhol's Dracula) (1974)",
+          "score": 4.59174919128418,
+          "genres": [
+            "Horror"
+          ]
+        }
+      ]
+    }
+  ]
+}
